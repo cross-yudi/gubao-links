@@ -124,7 +124,7 @@ function openModal(title, fields, onSave) {
   $('modalContent').innerHTML = `
     <h4>${escapeHtml(title)}</h4>
     ${fields.map(f => f.type === 'delete'
-      ? `<p style="color:#8899bb;font-size:14px;margin-top:8px;">${f.label}</p>`
+      ? `<p style="color:#8899bb;font-size:14px;margin-top:8px;">${escapeHtml(f.label)}</p>`
       : `<label>${escapeHtml(f.label)}</label>
         ${f.type === 'textarea'
           ? `<textarea id="field_${f.key}" placeholder="${escapeHtml(f.placeholder || '')}">${escapeHtml(f.value || '')}</textarea>`
@@ -139,12 +139,19 @@ function openModal(title, fields, onSave) {
   `;
   overlay.classList.add('show');
   $('btnSave').addEventListener('click', async () => {
+    $('btnSave').disabled = true;
+    const isEmpty = fields.some(f => f.type !== 'delete' && f.key !== 'description' && !document.getElementById(`field_${f.key}`).value.trim());
+    if (isEmpty) { showToast('请填写必填字段'); $('btnSave').disabled = false; return; }
     const values = {};
     fields.filter(f => f.type !== 'delete').forEach(f => {
       values[f.key] = document.getElementById(`field_${f.key}`).value;
     });
-    await onSave(values);
-    closeModal();
+    const result = await onSave(values);
+    if (result !== false) {
+      closeModal();
+    } else {
+      $('btnSave').disabled = false;
+    }
   });
 }
 
@@ -161,7 +168,7 @@ function editCategory(id) {
     { key: 'icon', label: '图标 (emoji)', value: cat.icon, placeholder: '例如 🎬' }
   ], async (values) => {
     const { error } = await supabase.from('categories').update({ name: values.name, icon: values.icon }).eq('id', id);
-    if (error) { showToast('更新失败：' + error.message); return; }
+    if (error) { showToast('更新失败：' + error.message); return false; }
     showToast('分类已更新');
     loadAdminData();
   });
@@ -174,7 +181,7 @@ async function deleteCategory(id) {
     { key: 'confirm', label: '删除分类将同时删除该分类下的所有链接，确定要删除吗？', type: 'delete' }
   ], async () => {
     const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (error) { showToast('删除失败：' + error.message); return; }
+    if (error) { showToast('删除失败：' + error.message); return false; }
     showToast('分类已删除');
     selectedCategoryId = null;
     loadAdminData();
@@ -190,7 +197,7 @@ async function addCategory() {
     const { error } = await supabase.from('categories').insert({
       name: values.name, icon: values.icon || '📌', sort_order: maxSort + 1
     });
-    if (error) { showToast('添加失败：' + error.message); return; }
+    if (error) { showToast('添加失败：' + error.message); return false; }
     showToast('分类已添加');
     loadAdminData();
   });
@@ -208,7 +215,7 @@ function editLink(id) {
     const { error } = await supabase.from('links').update({
       name: values.name, url: values.url, description: values.description
     }).eq('id', id);
-    if (error) { showToast('更新失败：' + error.message); return; }
+    if (error) { showToast('更新失败：' + error.message); return false; }
     showToast('链接已更新');
     loadAdminData();
   });
@@ -221,7 +228,7 @@ async function deleteLink(id) {
     { key: 'confirm', label: '确定要删除这个链接吗？', type: 'delete' }
   ], async () => {
     const { error } = await supabase.from('links').delete().eq('id', id);
-    if (error) { showToast('删除失败：' + error.message); return; }
+    if (error) { showToast('删除失败：' + error.message); return false; }
     showToast('链接已删除');
     loadAdminData();
   });
@@ -241,7 +248,7 @@ async function addLink() {
       name: values.name, url: values.url, description: values.description || '',
       sort_order: maxSort + 1
     });
-    if (error) { showToast('添加失败：' + error.message); return; }
+    if (error) { showToast('添加失败：' + error.message); return false; }
     showToast('链接已添加');
     loadAdminData();
   });

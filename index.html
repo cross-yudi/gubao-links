@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>咕宝聚合指南</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">✨ 咕宝聚合指南</div>
+    </header>
+
+    <div class="search-wrapper">
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索网站名称或关键词...">
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="links-section" id="linksSection">
+      <div class="section-title" id="sectionTitle"></div>
+      <div class="link-list" id="linkList"></div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

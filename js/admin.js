@@ -118,4 +118,142 @@ function renderLinks() {
   `).join('') || '<div class="empty-state">暂无链接，点击下方按钮添加</div>';
 }
 
+// ====== Modal ======
+function openModal(title, fields, onSave) {
+  const overlay = $('modalOverlay');
+  $('modalContent').innerHTML = `
+    <h4>${escapeHtml(title)}</h4>
+    ${fields.map(f => f.type === 'delete'
+      ? `<p style="color:#8899bb;font-size:14px;margin-top:8px;">${f.label}</p>`
+      : `<label>${escapeHtml(f.label)}</label>
+        ${f.type === 'textarea'
+          ? `<textarea id="field_${f.key}" placeholder="${escapeHtml(f.placeholder || '')}">${escapeHtml(f.value || '')}</textarea>`
+          : `<input type="text" id="field_${f.key}" placeholder="${escapeHtml(f.placeholder || '')}" value="${escapeHtml(f.value || '')}">`}`
+    ).join('')}
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      ${fields.some(f => f.type === 'delete')
+        ? `<button class="btn-delete-confirm" id="btnSave">确认删除</button>`
+        : `<button class="btn-save" id="btnSave">保存</button>`}
+    </div>
+  `;
+  overlay.classList.add('show');
+  $('btnSave').addEventListener('click', async () => {
+    const values = {};
+    fields.filter(f => f.type !== 'delete').forEach(f => {
+      values[f.key] = document.getElementById(`field_${f.key}`).value;
+    });
+    await onSave(values);
+    closeModal();
+  });
+}
+
+function closeModal() {
+  $('modalOverlay').classList.remove('show');
+}
+
+// ====== 分类 CRUD ======
+function editCategory(id) {
+  const cat = adminCategories.find(c => c.id === id);
+  if (!cat) return;
+  openModal('编辑分类', [
+    { key: 'name', label: '名称', value: cat.name },
+    { key: 'icon', label: '图标 (emoji)', value: cat.icon, placeholder: '例如 🎬' }
+  ], async (values) => {
+    const { error } = await supabase.from('categories').update({ name: values.name, icon: values.icon }).eq('id', id);
+    if (error) { showToast('更新失败：' + error.message); return; }
+    showToast('分类已更新');
+    loadAdminData();
+  });
+}
+
+async function deleteCategory(id) {
+  const cat = adminCategories.find(c => c.id === id);
+  if (!cat) return;
+  openModal(`删除分类: ${cat.icon} ${cat.name}`, [
+    { key: 'confirm', label: '删除分类将同时删除该分类下的所有链接，确定要删除吗？', type: 'delete' }
+  ], async () => {
+    const { error } = await supabase.from('categories').delete().eq('id', id);
+    if (error) { showToast('删除失败：' + error.message); return; }
+    showToast('分类已删除');
+    selectedCategoryId = null;
+    loadAdminData();
+  });
+}
+
+async function addCategory() {
+  openModal('添加分类', [
+    { key: 'name', label: '名称', placeholder: '例如 学习' },
+    { key: 'icon', label: '图标 (emoji)', placeholder: '例如 📚' }
+  ], async (values) => {
+    const maxSort = adminCategories.reduce((max, c) => Math.max(max, c.sort_order), 0);
+    const { error } = await supabase.from('categories').insert({
+      name: values.name, icon: values.icon || '📌', sort_order: maxSort + 1
+    });
+    if (error) { showToast('添加失败：' + error.message); return; }
+    showToast('分类已添加');
+    loadAdminData();
+  });
+}
+
+// ====== 链接 CRUD ======
+function editLink(id) {
+  const link = adminLinks.find(l => l.id === id);
+  if (!link) return;
+  openModal('编辑链接', [
+    { key: 'name', label: '网站名称', value: link.name },
+    { key: 'url', label: '网址', value: link.url, placeholder: 'https://...' },
+    { key: 'description', label: '描述', value: link.description || '', type: 'textarea', placeholder: '简短描述' }
+  ], async (values) => {
+    const { error } = await supabase.from('links').update({
+      name: values.name, url: values.url, description: values.description
+    }).eq('id', id);
+    if (error) { showToast('更新失败：' + error.message); return; }
+    showToast('链接已更新');
+    loadAdminData();
+  });
+}
+
+async function deleteLink(id) {
+  const link = adminLinks.find(l => l.id === id);
+  if (!link) return;
+  openModal(`删除链接: ${link.name}`, [
+    { key: 'confirm', label: '确定要删除这个链接吗？', type: 'delete' }
+  ], async () => {
+    const { error } = await supabase.from('links').delete().eq('id', id);
+    if (error) { showToast('删除失败：' + error.message); return; }
+    showToast('链接已删除');
+    loadAdminData();
+  });
+}
+
+async function addLink() {
+  if (!selectedCategoryId) return;
+  openModal('添加链接', [
+    { key: 'name', label: '网站名称', placeholder: '例如 低端影视' },
+    { key: 'url', label: '网址', placeholder: 'https://...' },
+    { key: 'description', label: '描述', type: 'textarea', placeholder: '简短描述（可选）' }
+  ], async (values) => {
+    const catLinks = adminLinks.filter(l => l.category_id === selectedCategoryId);
+    const maxSort = catLinks.reduce((max, l) => Math.max(max, l.sort_order), 0);
+    const { error } = await supabase.from('links').insert({
+      category_id: selectedCategoryId,
+      name: values.name, url: values.url, description: values.description || '',
+      sort_order: maxSort + 1
+    });
+    if (error) { showToast('添加失败：' + error.message); return; }
+    showToast('链接已添加');
+    loadAdminData();
+  });
+}
+
+// ====== 事件绑定 ======
+$('btnAddCat').addEventListener('click', addCategory);
+$('btnAddLink').addEventListener('click', addLink);
+
+// 关闭 modal（点击遮罩）
+$('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === $('modalOverlay')) closeModal();
+});
+
 document.addEventListener('DOMContentLoaded', initLogin);

@@ -18,13 +18,21 @@ function showToast(msg) {
 // ====== 密码门 ======
 async function loadAdminPassword() {
   const { data, error } = await supabase.from('config').select('value').eq('key', 'admin_password').single();
-  if (error) { console.error('加载密码配置失败:', error); return; }
+  if (error) { showToast('密码配置加载失败，请刷新页面重试'); adminPassword = null; return; }
   adminPassword = data.value;
 }
 
 async function initLogin() {
   await loadAdminPassword();
-  $('loginBtn').addEventListener('click', () => {
+  $('loginBtn').addEventListener('click', async () => {
+    if (adminPassword === null || adminPassword === '') {
+      showToast('密码配置异常，请刷新页面重试');
+      return;
+    }
+    const btn = $('loginBtn');
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '验证中...';
     const input = $('passwordInput').value;
     if (input === adminPassword) {
       $('passwordGate').style.display = 'none';
@@ -32,6 +40,8 @@ async function initLogin() {
       $('adminPanel').style.flexDirection = 'column';
       loadAdminData();
     } else {
+      btn.disabled = false;
+      btn.textContent = origText;
       $('passwordError').style.display = 'block';
     }
   });
@@ -52,8 +62,8 @@ async function loadAdminData() {
     supabase.from('categories').select('*').order('sort_order'),
     supabase.from('links').select('*').order('sort_order')
   ]);
-  if (catRes.error) { console.error(catRes.error); return; }
-  if (linkRes.error) { console.error(linkRes.error); return; }
+  if (catRes.error) { showToast('分类数据加载失败：' + catRes.error.message); return; }
+  if (linkRes.error) { showToast('链接数据加载失败：' + linkRes.error.message); return; }
   adminCategories = catRes.data;
   adminLinks = linkRes.data;
   renderSidebar();

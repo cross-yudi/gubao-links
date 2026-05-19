@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 · 咕宝聚合指南</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body" style="background: linear-gradient(135deg, #f0f4ff 0%, #f8f6ff 50%, #eef3fa 100%); min-height: 100vh;">
+
+  <!-- 密码门 -->
+  <div class="password-gate" id="passwordGate">
+    <div class="password-box">
+      <h2>🔐 管理后台</h2>
+      <div class="password-error" id="passwordError">密码错误，请重试</div>
+      <input type="password" id="passwordInput" placeholder="请输入管理密码" autocomplete="off">
+      <button id="loginBtn">进入管理</button>
+    </div>
+  </div>
+
+  <!-- 管理主界面 -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+      <div class="logo">⚙️ 管理后台</div>
+      <button class="btn-logout" id="logoutBtn">退出</button>
+    </div>
+    <div class="admin-body-layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-title">分类</div>
+        <div id="catList"></div>
+        <div class="sidebar-footer">
+          <button class="btn-add-cat" id="btnAddCat">+ 添加分类</button>
+        </div>
+      </aside>
+      <main class="main-area" id="mainArea">
+        <div class="main-header">
+          <div>
+            <h3 id="mainTitle">选择一个分类</h3>
+            <span id="mainCount"></span>
+          </div>
+          <button class="btn-add-link" id="btnAddLink" style="display:none;">+ 添加链接</button>
+        </div>
+        <div id="linkRows"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

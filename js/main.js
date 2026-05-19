@@ -10,8 +10,16 @@ async function loadData() {
     supabase.from('links').select('*').order('sort_order')
   ]);
 
-  if (catRes.error) { console.error('加载分类失败:', catRes.error); return; }
-  if (linkRes.error) { console.error('加载链接失败:', linkRes.error); return; }
+  if (catRes.error) {
+    console.error('加载分类失败:', catRes.error);
+    document.getElementById('linkList').innerHTML = '<div class="empty-state">分类加载失败，请刷新页面重试 😞</div>';
+    return;
+  }
+  if (linkRes.error) {
+    console.error('加载链接失败:', linkRes.error);
+    document.getElementById('linkList').innerHTML = '<div class="empty-state">链接加载失败，请刷新页面重试 😞</div>';
+    return;
+  }
 
   categories = catRes.data;
   links = linkRes.data;
@@ -28,7 +36,7 @@ function renderTabs() {
   const tabsEl = document.getElementById('tabs');
   tabsEl.innerHTML = categories.map(cat =>
     `<button class="tab${cat.id === activeCategoryId ? ' active' : ''}" data-id="${cat.id}">
-      ${cat.icon} ${cat.name}
+      ${escapeHtml(cat.icon)} ${escapeHtml(cat.name)}
     </button>`
   ).join('');
 
@@ -47,12 +55,14 @@ function renderLinks(filterText = '') {
   const titleEl = document.getElementById('sectionTitle');
   const listEl = document.getElementById('linkList');
 
-  let filteredLinks = links.filter(l => l.category_id === activeCategoryId);
+  let filteredLinks;
   if (filterText) {
     filteredLinks = links.filter(l =>
       l.name.toLowerCase().includes(filterText) ||
       (l.description && l.description.toLowerCase().includes(filterText))
     );
+  } else {
+    filteredLinks = links.filter(l => l.category_id === activeCategoryId);
   }
 
   if (filterText) {
@@ -89,21 +99,29 @@ function initSearch() {
   const input = document.getElementById('searchInput');
   const container = document.querySelector('.container');
 
+  let debounceTimer;
+
   input.addEventListener('input', () => {
-    const val = input.value.trim().toLowerCase();
-    if (val) {
-      container.classList.add('search-mode');
-      activeCategoryId = null;
-      renderTabs();
-      renderLinks(val);
-    } else {
-      container.classList.remove('search-mode');
-      activeCategoryId = categories.length > 0 ? categories[0].id : null;
-      renderTabs();
-      renderLinks();
-    }
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      const val = input.value.trim().toLowerCase();
+      if (val) {
+        container.classList.add('search-mode');
+        activeCategoryId = null;
+        renderTabs();
+        renderLinks(val);
+      } else {
+        container.classList.remove('search-mode');
+        activeCategoryId = categories.length > 0 ? categories[0].id : null;
+        renderTabs();
+        renderLinks();
+      }
+    }, 200);
   });
 }
 
 // 启动
-loadData().then(() => initSearch());
+loadData().then(() => initSearch()).catch(err => {
+  console.error('启动失败:', err);
+  document.getElementById('linkList').innerHTML = '<div class="empty-state">加载失败，请刷新页面重试 😞</div>';
+});

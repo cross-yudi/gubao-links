@@ -51,13 +51,14 @@ body {
 .link-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .link-card {
   display: flex; flex-direction: column;
-  padding: 24px;
+  padding: 24px; height: 200px;
   background: #fff;
   border-radius: 14px; cursor: pointer;
   box-shadow: 0 2px 12px rgba(0,0,0,0.05);
   border-top: 4px solid rgba(90,120,220,0.25);
   transition: all 0.2s;
   text-decoration: none; color: inherit;
+  overflow: hidden;
 }
 .link-card:hover {
   border-top-color: #5a78dc;
@@ -67,7 +68,7 @@ body {
 .link-icon { font-size: 40px; width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .link-icon img { width: 32px; height: 32px; border-radius: 4px; }
 .link-name { font-size: 17px; font-weight: 600; color: #3a3d66; }
-.link-desc { font-size: 13px; color: #8899bb; text-align: left; }
+.link-desc { font-size: 13px; color: #8899bb; text-align: left; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; flex: 1; }
 .link-arrow { display: none; }
 
 /* 搜索模式 */

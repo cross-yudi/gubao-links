@@ -33,12 +33,12 @@ body {
 .tab {
   padding: 16px 0; width: calc((100% - 72px) / 7); min-width: 120px; text-align: center;
   border-radius: 26px; border: none; cursor: pointer;
-  font-size: 24px; font-weight: 700; background: rgba(0,0,0,0.04); color: #8899bb;
+  font-size: 21px; font-weight: 700; background: rgba(0,0,0,0.04); color: #8899bb;
   transition: all 0.2s;
 }
 .tab:hover { background: rgba(90,120,220,0.1); color: #5a78dc; }
 .tab.active { background: #5a78dc; color: #fff; }
-.tab-en { font-size: 18px; font-weight: 400; opacity: 0.65; }
+.tab-en { font-size: 15px; font-weight: 400; opacity: 0.65; }
 
 /* 链接列表 */
 .links-section { }

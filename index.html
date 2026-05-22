@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>咕宝网站聚合指南</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
-  <!-- 直接调 REST API，无需外部库 -->
 </head>
 <body>
   <div class="container">
     <header class="header">
       <div class="logo">🦉 咕宝网站聚合指南<span class="logo-en">Gubao Links</span></div>
+      <nav class="nav-links">
+        <a href="about.html">关于</a>
+      </nav>
       <div class="search-wrapper">
         <input type="text" class="search-input" id="searchInput" placeholder="搜索网站名称或关键词...">
       </div>
@@ -28,6 +31,8 @@
       <p class="footer-bottom"><span>📧 联系方式：gubaby@proton.me</span><span class="footer-sep"> · </span><span>更多网站持续收录中...</span></p>
     </footer>
   </div>
+
+  <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>

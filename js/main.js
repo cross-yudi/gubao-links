@@ -126,5 +126,16 @@ function initSearch() {
   });
 }
 
+// 回到顶部
+function initBackToTop() {
+  const btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('show', window.scrollY > 400);
+  });
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
 // 启动
-loadData().then(() => initSearch());
+loadData().then(() => { initSearch(); initBackToTop(); });

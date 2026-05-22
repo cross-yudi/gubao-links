@@ -128,7 +128,10 @@ function renderLinks() {
   $('btnAddLink').style.display = 'block';
 
   $('linkRows').innerHTML = catLinks.map(link => `
-    <div class="link-row">
+    <div class="link-row" draggable="true" data-id="${link.id}"
+         ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
+         ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <span class="drag-handle">⋮⋮</span>
       <span class="lr-name">${escapeHtml(link.name)}</span>
       <span class="lr-url">${escapeHtml(link.url)}</span>
       <span class="lr-actions">
@@ -273,6 +276,64 @@ async function addLink() {
     showToast('链接已添加');
     loadAdminData();
   });
+}
+
+// ====== 拖拽排序 ======
+let draggedId = null;
+
+function handleDragStart(e) {
+  draggedId = parseInt(e.currentTarget.dataset.id);
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  draggedId = null;
+  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  if (e.currentTarget.dataset.id != draggedId) {
+    e.currentTarget.classList.add('drag-over');
+  }
+}
+
+function handleDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+async function handleDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const targetId = parseInt(e.currentTarget.dataset.id);
+  if (!draggedId || draggedId === targetId) return;
+
+  const catLinks = adminLinks.filter(l => l.category_id === selectedCategoryId);
+  const draggedIdx = catLinks.findIndex(l => l.id === draggedId);
+  const targetIdx = catLinks.findIndex(l => l.id === targetId);
+  if (draggedIdx < 0 || targetIdx < 0) return;
+
+  // 在本地下移
+  const [moved] = catLinks.splice(draggedIdx, 1);
+  catLinks.splice(targetIdx, 0, moved);
+
+  // 更新内存中所有链接
+  const newOrder = catLinks.map((l, i) => ({ ...l, sort_order: i + 1 }));
+  adminLinks = adminLinks.map(l => {
+    const updated = newOrder.find(n => n.id === l.id);
+    return updated || l;
+  });
+
+  // 更新数据库
+  for (const link of newOrder) {
+    await apiMutate('PATCH', `links?id=eq.${link.id}`, { sort_order: link.sort_order });
+  }
+
+  renderLinks();
+  showToast('顺序已更新');
 }
 
 // ====== 事件绑定 ======

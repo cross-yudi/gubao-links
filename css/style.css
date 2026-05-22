@@ -163,7 +163,12 @@ body {
   display: flex; align-items: center; gap: 12px; padding: 12px 16px;
   background: #fff; border-radius: 10px; margin-bottom: 6px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  cursor: grab; transition: opacity 0.15s, box-shadow 0.15s;
 }
+.link-row:active { cursor: grabbing; }
+.link-row.dragging { opacity: 0.4; box-shadow: 0 4px 16px rgba(90,120,220,0.15); }
+.link-row.drag-over { box-shadow: 0 0 0 2px #5a78dc, 0 2px 12px rgba(90,120,220,0.15); }
+.link-row .drag-handle { color: #ccd0dd; margin-right: 2px; cursor: grab; font-size: 14px; }
 .link-row .lr-name { font-weight: 600; font-size: 14px; color: #3a3d66; flex: 1; }
 .link-row .lr-url { font-size: 12px; color: #8899bb; flex: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .link-row .lr-actions { display: flex; gap: 4px; flex-shrink: 0; }
@@ -213,20 +218,28 @@ body {
 
 /* 响应式 */
 @media (max-width: 640px) {
-  .container { padding: 20px 12px 40px; }
-  .header { flex-direction: column; gap: 12px; }
+  .container { padding: 16px 12px 40px; }
+  .header { flex-direction: column; gap: 10px; align-items: center; position: relative; }
   .logo { font-size: 22px; }
-  .search-wrapper { justify-content: center; }
-  .search-input { max-width: 100%; }
-  .tabs { gap: 6px; }
-  .tab { padding: 8px 18px; font-size: 14px; }
-  .link-list { grid-template-columns: 1fr; }
-  .link-card { padding: 16px; }
+  .logo-en { font-size: 13px; display: block; margin-left: 0; }
+  .nav-links { margin-left: 0; position: absolute; top: 0; right: 0; }
+  .search-wrapper { width: 100%; }
+  .search-input { max-width: 100%; width: 100%; }
+  .tabs { gap: 8px; }
+  .tab { padding: 8px 16px; width: auto; min-width: 0; font-size: 16px; border-radius: 20px; }
+  .tab-en { font-size: 11px; }
+  .link-list { grid-template-columns: 1fr; gap: 10px; }
+  .link-card { padding: 18px; }
+  .back-to-top { bottom: 20px; right: 16px; width: 36px; height: 36px; font-size: 18px; }
   .admin-body-layout { flex-direction: column; }
   .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 8px; border-right: none; border-bottom: 1px solid #f0f0f5; flex-shrink: 0; }
   .sidebar-title { display: none; }
   .sidebar-footer { display: none; }
   .cat-item { white-space: nowrap; padding: 6px 12px; font-size: 13px; }
+  .cat-item .cat-count { display: none; }
   .main-area { padding: 16px; }
   .modal { width: 90%; margin: 0 16px; }
+  .footer { margin-top: 40px; padding-top: 20px; }
+  .footer-disclaimer { font-size: 11px; }
+  .footer-bottom { font-size: 12px; }
 }

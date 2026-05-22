@@ -12,9 +12,19 @@ async function loadData() {
     ]);
   } catch (err) {
     console.error('加载失败:', err);
+    document.getElementById('loadingSkeleton').style.display = 'none';
+    document.getElementById('linksSection').style.display = 'block';
     document.getElementById('linkList').innerHTML = '<div class="empty-state">数据加载失败，请刷新页面重试 😞</div>';
     return;
   }
+
+  // 隐藏骨架，显示内容
+  document.getElementById('loadingSkeleton').style.display = 'none';
+  document.getElementById('linksSection').style.display = 'block';
+
+  // 统计
+  document.getElementById('footerStats').textContent =
+    `已收录 ${categories.length} 个分类 · ${links.length} 个网站`;
 
   if (categories.length > 0) {
     activeCategoryId = categories[0].id;

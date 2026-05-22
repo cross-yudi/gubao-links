@@ -21,12 +21,23 @@
 
     <div class="tabs" id="tabs"></div>
 
-    <div class="links-section" id="linksSection">
+    <!-- 加载骨架 -->
+    <div class="loading-skeleton" id="loadingSkeleton">
+      <div class="skeleton-tabs">
+        <div class="sk-tab"></div><div class="sk-tab"></div><div class="sk-tab"></div><div class="sk-tab"></div><div class="sk-tab"></div><div class="sk-tab"></div><div class="sk-tab"></div>
+      </div>
+      <div class="skeleton-cards">
+        <div class="sk-card"></div><div class="sk-card"></div><div class="sk-card"></div><div class="sk-card"></div><div class="sk-card"></div><div class="sk-card"></div>
+      </div>
+    </div>
+
+    <div class="links-section" id="linksSection" style="display:none;">
       <div class="section-title" id="sectionTitle"></div>
       <div class="link-list" id="linkList"></div>
     </div>
 
     <footer class="footer">
+      <p class="footer-stats" id="footerStats"></p>
       <p class="footer-disclaimer">免责声明：本站仅收录网站链接，不存储任何内容。链接来源均为公开资源，如有侵权请联系删除。</p>
       <p class="footer-bottom"><span>📧 联系方式：gubaby@proton.me</span><span class="footer-sep"> · </span><span>更多网站持续收录中...</span></p>
     </footer>

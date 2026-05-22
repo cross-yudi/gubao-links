@@ -211,6 +211,25 @@ body {
 }
 .toast.show { opacity: 1; }
 
+/* 加载骨架 */
+.loading-skeleton { }
+.skeleton-tabs { display: flex; gap: 12px; justify-content: center; margin-bottom: 36px; }
+.sk-tab {
+  width: calc((100% - 72px) / 7); min-width: 120px; height: 52px;
+  border-radius: 20px; background: linear-gradient(90deg, #e8ecf5 25%, #f0f2fa 50%, #e8ecf5 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}
+.skeleton-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sk-card {
+  height: 200px; border-radius: 14px;
+  background: linear-gradient(90deg, #e8ecf5 25%, #f0f2fa 50%, #e8ecf5 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* 页脚统计 */
+.footer-stats { font-size: 15px; color: #5a78dc; font-weight: 600; margin-bottom: 12px; }
+
 /* 关于页面 */
 .about-content { max-width: 680px; margin: 0 auto; padding: 20px 0; }
 .about-content h2 { font-size: 24px; color: #3a3d66; margin-bottom: 20px; }
@@ -240,6 +259,10 @@ body {
   .cat-item .cat-count { display: none; }
   .main-area { padding: 16px; }
   .modal { width: 90%; margin: 0 16px; }
+  .skeleton-tabs { gap: 6px; }
+  .sk-tab { min-width: 0; height: 38px; border-radius: 14px; }
+  .skeleton-cards { grid-template-columns: 1fr; }
+  .sk-card { height: 140px; }
   .footer { margin-top: 40px; padding-top: 20px; }
   .footer-disclaimer { font-size: 11px; }
   .footer-bottom { font-size: 12px; }

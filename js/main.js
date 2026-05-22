@@ -68,15 +68,27 @@ function renderLinks(filterText = '') {
     return;
   }
 
-  listEl.innerHTML = filteredLinks.map(link => `
+  listEl.innerHTML = filteredLinks.map(link => {
+    const favicon = getFaviconUrl(link.url);
+    const fallback = activeCat ? activeCat.icon : '🔗';
+    return `
     <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener" class="link-card">
-      <span class="link-icon">${activeCat ? activeCat.icon : '🔗'}</span>
-      <div class="link-info">
+      <div class="link-top">
+        <span class="link-icon">
+          ${favicon ? `<img src="${favicon}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none">${fallback}</span>` : fallback}
+        </span>
         <div class="link-name">${escapeHtml(link.name)}</div>
-        ${link.description ? `<div class="link-desc">${escapeHtml(link.description)}</div>` : ''}
       </div>
+      ${link.description ? `<div class="link-desc">${escapeHtml(link.description)}</div>` : ''}
     </a>
-  `).join('');
+  `}).join('');
+}
+
+function getFaviconUrl(url) {
+  try {
+    const host = new URL(url).hostname;
+    return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
+  } catch { return ''; }
 }
 
 function escapeHtml(str) {

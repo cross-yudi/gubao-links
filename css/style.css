@@ -12,11 +12,11 @@ body {
 .container { max-width: 1200px; margin: 0 auto; padding: 40px 32px 80px; }
 
 /* Header */
-.header { position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 36px; }
-.logo { font-size: 34px; font-weight: 700; color: #3a3d66; position: absolute; left: 0; }
+.header { display: flex; align-items: center; gap: 40px; margin-bottom: 36px; }
+.logo { font-size: 34px; font-weight: 700; color: #3a3d66; flex-shrink: 0; }
 
 /* 搜索栏 */
-.search-wrapper { }
+.search-wrapper { flex: 1; display: flex; justify-content: center; }
 .search-input {
   width: 520px; padding: 14px 24px;
   border: 2px solid #d8ddf0; border-radius: 28px; background: #fff;
@@ -45,18 +45,19 @@ body {
 /* 链接卡片网格 */
 .link-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .link-card {
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  padding: 28px 20px 22px;
-  background: #fff; border-radius: 16px; cursor: pointer;
+  display: flex; flex-direction: column;
+  padding: 24px;
+  background: #fff; border-radius: 14px; cursor: pointer;
   box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   transition: all 0.2s;
   text-decoration: none; color: inherit;
 }
-.link-card:hover { box-shadow: 0 6px 28px rgba(80,80,200,0.12); transform: translateY(-3px); }
-.link-icon { font-size: 36px; margin-bottom: 12px; }
-.link-info { }
-.link-name { font-size: 15px; font-weight: 600; color: #3a3d66; margin-bottom: 4px; }
-.link-desc { font-size: 12px; color: #8899bb; }
+.link-card:hover { box-shadow: 0 6px 28px rgba(80,80,200,0.12); transform: translateY(-2px); }
+.link-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.link-icon { font-size: 40px; width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.link-icon img { width: 32px; height: 32px; border-radius: 4px; }
+.link-name { font-size: 17px; font-weight: 600; color: #3a3d66; }
+.link-desc { font-size: 13px; color: #8899bb; text-align: left; }
 .link-arrow { display: none; }
 
 /* 搜索模式 */
@@ -186,7 +187,7 @@ body {
   .tabs { gap: 6px; }
   .tab { padding: 8px 18px; font-size: 14px; }
   .link-list { grid-template-columns: 1fr; }
-  .link-card { padding: 20px 16px; }
+  .link-card { padding: 16px; }
   .admin-body-layout { flex-direction: column; }
   .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 8px; border-right: none; border-bottom: 1px solid #f0f0f5; flex-shrink: 0; }
   .sidebar-title { display: none; }

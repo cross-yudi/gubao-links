@@ -218,13 +218,13 @@ body {
 
 /* 响应式 */
 @media (max-width: 640px) {
-  .container { padding: 16px 12px 40px; }
+  .container { padding: 16px 12px 40px; overflow-x: hidden; }
   .header { flex-direction: column; gap: 10px; align-items: center; position: relative; }
   .logo { font-size: 22px; }
   .logo-en { font-size: 13px; display: block; margin-left: 0; }
   .nav-links { margin-left: 0; position: absolute; top: 0; right: 0; }
-  .search-wrapper { width: 100%; }
-  .search-input { max-width: 100%; width: 100%; }
+  .search-wrapper { width: 100%; flex: none; }
+  .search-input { width: 100%; max-width: 100%; box-sizing: border-box; }
   .tabs { gap: 8px; }
   .tab { padding: 8px 16px; width: auto; min-width: 0; font-size: 16px; border-radius: 20px; }
   .tab-en { font-size: 11px; }

@@ -15,11 +15,32 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+// ====== 带错误处理的 REST 封装 ======
+async function apiGet(path) {
+  try {
+    return await supabaseFetch(path);
+  } catch (err) {
+    return null;
+  }
+}
+
+async function apiMutate(method, path, body) {
+  try {
+    const opts = { method };
+    if (body) { opts.body = JSON.stringify(body); }
+    await supabaseFetch(path, opts);
+    return true;
+  } catch (err) {
+    showToast('操作失败：' + err.message);
+    return false;
+  }
+}
+
 // ====== 密码门 ======
 async function loadAdminPassword() {
-  const { data, error } = await supabase.from('config').select('value').eq('key', 'admin_password').single();
-  if (error) { showToast('密码配置加载失败，请刷新页面重试'); adminPassword = null; return; }
-  adminPassword = data.value;
+  const data = await apiGet('config?select=value&key=eq.admin_password');
+  if (!data || data.length === 0) { showToast('密码配置加载失败，请刷新页面重试'); adminPassword = null; return; }
+  adminPassword = data[0].value;
 }
 
 async function initLogin() {
@@ -58,14 +79,14 @@ async function initLogin() {
 
 // ====== 数据加载 ======
 async function loadAdminData() {
-  const [catRes, linkRes] = await Promise.all([
-    supabase.from('categories').select('*').order('sort_order'),
-    supabase.from('links').select('*').order('sort_order')
+  const [cats, lnks] = await Promise.all([
+    apiGet('categories?select=*&order=sort_order'),
+    apiGet('links?select=*&order=sort_order')
   ]);
-  if (catRes.error) { showToast('分类数据加载失败：' + catRes.error.message); return; }
-  if (linkRes.error) { showToast('链接数据加载失败：' + linkRes.error.message); return; }
-  adminCategories = catRes.data;
-  adminLinks = linkRes.data;
+  if (!cats) { showToast('分类数据加载失败'); return; }
+  if (!lnks) { showToast('链接数据加载失败'); return; }
+  adminCategories = cats;
+  adminLinks = lnks;
   renderSidebar();
   if (adminCategories.length > 0) {
     selectCategory(adminCategories[0].id);
@@ -167,8 +188,8 @@ function editCategory(id) {
     { key: 'name', label: '名称', value: cat.name },
     { key: 'icon', label: '图标 (emoji)', value: cat.icon, placeholder: '例如 🎬' }
   ], async (values) => {
-    const { error } = await supabase.from('categories').update({ name: values.name, icon: values.icon }).eq('id', id);
-    if (error) { showToast('更新失败：' + error.message); return false; }
+    const ok = await apiMutate('PATCH', `categories?id=eq.${id}`, { name: values.name, icon: values.icon });
+    if (!ok) return false;
     showToast('分类已更新');
     loadAdminData();
   });
@@ -180,8 +201,8 @@ async function deleteCategory(id) {
   openModal(`删除分类: ${cat.icon} ${cat.name}`, [
     { key: 'confirm', label: '删除分类将同时删除该分类下的所有链接，确定要删除吗？', type: 'delete' }
   ], async () => {
-    const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (error) { showToast('删除失败：' + error.message); return false; }
+    const ok = await apiMutate('DELETE', `categories?id=eq.${id}`);
+    if (!ok) return false;
     showToast('分类已删除');
     selectedCategoryId = null;
     loadAdminData();
@@ -194,10 +215,10 @@ async function addCategory() {
     { key: 'icon', label: '图标 (emoji)', placeholder: '例如 📚' }
   ], async (values) => {
     const maxSort = adminCategories.reduce((max, c) => Math.max(max, c.sort_order), 0);
-    const { error } = await supabase.from('categories').insert({
+    const ok = await apiMutate('POST', 'categories', {
       name: values.name, icon: values.icon || '📌', sort_order: maxSort + 1
     });
-    if (error) { showToast('添加失败：' + error.message); return false; }
+    if (!ok) return false;
     showToast('分类已添加');
     loadAdminData();
   });
@@ -212,10 +233,10 @@ function editLink(id) {
     { key: 'url', label: '网址', value: link.url, placeholder: 'https://...' },
     { key: 'description', label: '描述', value: link.description || '', type: 'textarea', placeholder: '简短描述' }
   ], async (values) => {
-    const { error } = await supabase.from('links').update({
+    const ok = await apiMutate('PATCH', `links?id=eq.${id}`, {
       name: values.name, url: values.url, description: values.description
-    }).eq('id', id);
-    if (error) { showToast('更新失败：' + error.message); return false; }
+    });
+    if (!ok) return false;
     showToast('链接已更新');
     loadAdminData();
   });
@@ -227,8 +248,8 @@ async function deleteLink(id) {
   openModal(`删除链接: ${link.name}`, [
     { key: 'confirm', label: '确定要删除这个链接吗？', type: 'delete' }
   ], async () => {
-    const { error } = await supabase.from('links').delete().eq('id', id);
-    if (error) { showToast('删除失败：' + error.message); return false; }
+    const ok = await apiMutate('DELETE', `links?id=eq.${id}`);
+    if (!ok) return false;
     showToast('链接已删除');
     loadAdminData();
   });
@@ -243,12 +264,12 @@ async function addLink() {
   ], async (values) => {
     const catLinks = adminLinks.filter(l => l.category_id === selectedCategoryId);
     const maxSort = catLinks.reduce((max, l) => Math.max(max, l.sort_order), 0);
-    const { error } = await supabase.from('links').insert({
+    const ok = await apiMutate('POST', 'links', {
       category_id: selectedCategoryId,
       name: values.name, url: values.url, description: values.description || '',
       sort_order: maxSort + 1
     });
-    if (error) { showToast('添加失败：' + error.message); return false; }
+    if (!ok) return false;
     showToast('链接已添加');
     loadAdminData();
   });

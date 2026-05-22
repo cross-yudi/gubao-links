@@ -5,24 +5,16 @@ let activeCategoryId = null;
 
 // 加载数据
 async function loadData() {
-  const [catRes, linkRes] = await Promise.all([
-    supabase.from('categories').select('*').order('sort_order'),
-    supabase.from('links').select('*').order('sort_order')
-  ]);
-
-  if (catRes.error) {
-    console.error('加载分类失败:', catRes.error);
-    document.getElementById('linkList').innerHTML = '<div class="empty-state">分类加载失败，请刷新页面重试 😞</div>';
+  try {
+    [categories, links] = await Promise.all([
+      supabaseFetch('categories?select=*&order=sort_order'),
+      supabaseFetch('links?select=*&order=sort_order')
+    ]);
+  } catch (err) {
+    console.error('加载失败:', err);
+    document.getElementById('linkList').innerHTML = '<div class="empty-state">数据加载失败，请刷新页面重试 😞</div>';
     return;
   }
-  if (linkRes.error) {
-    console.error('加载链接失败:', linkRes.error);
-    document.getElementById('linkList').innerHTML = '<div class="empty-state">链接加载失败，请刷新页面重试 😞</div>';
-    return;
-  }
-
-  categories = catRes.data;
-  links = linkRes.data;
 
   if (categories.length > 0) {
     activeCategoryId = categories[0].id;
@@ -83,7 +75,6 @@ function renderLinks(filterText = '') {
         <div class="link-name">${escapeHtml(link.name)}</div>
         ${link.description ? `<div class="link-desc">${escapeHtml(link.description)}</div>` : ''}
       </div>
-      <span class="link-arrow">→</span>
     </a>
   `).join('');
 }
@@ -98,7 +89,6 @@ function escapeHtml(str) {
 function initSearch() {
   const input = document.getElementById('searchInput');
   const container = document.querySelector('.container');
-
   let debounceTimer;
 
   input.addEventListener('input', () => {
@@ -121,7 +111,4 @@ function initSearch() {
 }
 
 // 启动
-loadData().then(() => initSearch()).catch(err => {
-  console.error('启动失败:', err);
-  document.getElementById('linkList').innerHTML = '<div class="empty-state">加载失败，请刷新页面重试 😞</div>';
-});
+loadData().then(() => initSearch());

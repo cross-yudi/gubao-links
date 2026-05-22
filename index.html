@@ -5,17 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>咕宝聚合指南</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- 直接调 REST API，无需外部库 -->
 </head>
 <body>
   <div class="container">
     <header class="header">
-      <div class="logo">✨ 咕宝聚合指南</div>
+      <div class="logo">🦉 咕宝聚合指南</div>
+      <div class="search-wrapper">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索网站名称或关键词...">
+      </div>
     </header>
-
-    <div class="search-wrapper">
-      <input type="text" class="search-input" id="searchInput" placeholder="搜索网站名称或关键词...">
-    </div>
 
     <div class="tabs" id="tabs"></div>
 

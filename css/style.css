@@ -45,19 +45,24 @@ body {
 
 /* 链接列表 */
 .links-section { }
-.section-title { font-size: 14px; color: #8899bb; margin-bottom: 16px; }
+.section-title { font-size: 14px; color: #667799; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid rgba(90,120,220,0.25); }
 
 /* 链接卡片网格 */
 .link-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .link-card {
   display: flex; flex-direction: column;
   padding: 24px;
-  background: #fff; border-radius: 14px; cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  background: #fff;
+  border-radius: 14px; cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border-top: 4px solid rgba(90,120,220,0.25);
   transition: all 0.2s;
   text-decoration: none; color: inherit;
 }
-.link-card:hover { box-shadow: 0 6px 28px rgba(80,80,200,0.12); transform: translateY(-2px); }
+.link-card:hover {
+  border-top-color: #5a78dc;
+  box-shadow: 0 6px 28px rgba(80,80,200,0.14); transform: translateY(-2px);
+}
 .link-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 .link-icon { font-size: 40px; width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .link-icon img { width: 32px; height: 32px; border-radius: 4px; }

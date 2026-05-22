@@ -31,14 +31,14 @@ body {
 /* 分类 Tab */
 .tabs { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 36px; }
 .tab {
-  padding: 16px 0; width: calc((100% - 72px) / 7); min-width: 120px; text-align: center;
-  border-radius: 26px; border: none; cursor: pointer;
-  font-size: 21px; font-weight: 700; background: rgba(0,0,0,0.04); color: #8899bb;
+  padding: 10px 0; width: calc((100% - 72px) / 7); min-width: 120px; text-align: center;
+  border-radius: 20px; border: none; cursor: pointer;
+  font-size: 19px; font-weight: 700; background: rgba(0,0,0,0.04); color: #8899bb;
   transition: all 0.2s;
 }
 .tab:hover { background: rgba(90,120,220,0.1); color: #5a78dc; }
 .tab.active { background: #5a78dc; color: #fff; }
-.tab-en { font-size: 15px; font-weight: 400; opacity: 0.65; }
+.tab-en { font-size: 13px; font-weight: 400; opacity: 0.65; }
 
 /* 链接列表 */
 .links-section { }

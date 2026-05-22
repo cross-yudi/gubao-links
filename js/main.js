@@ -29,7 +29,7 @@ function renderTabs() {
   tabsEl.innerHTML = categories.map(cat => {
     const parts = cat.name.split(' / ');
     const nameHtml = parts.length === 2
-      ? `${escapeHtml(parts[0])} <span class="tab-en">${escapeHtml(parts[1])}</span>`
+      ? `${escapeHtml(parts[0])}<br><span class="tab-en">${escapeHtml(parts[1])}</span>`
       : escapeHtml(cat.name);
     return `<button class="tab${cat.id === activeCategoryId ? ' active' : ''}" data-id="${cat.id}">
       ${escapeHtml(cat.icon)} ${nameHtml}

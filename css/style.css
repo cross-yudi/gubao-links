@@ -14,6 +14,7 @@ body {
 /* Header */
 .header { display: flex; align-items: center; gap: 40px; margin-bottom: 36px; }
 .logo { font-size: 34px; font-weight: 700; color: #3a3d66; flex-shrink: 0; }
+.logo-en { font-size: 16px; font-weight: 400; color: #8899bb; margin-left: 10px; }
 
 /* 搜索栏 */
 .search-wrapper { flex: 1; display: flex; justify-content: center; }
@@ -37,6 +38,7 @@ body {
 }
 .tab:hover { background: rgba(90,120,220,0.1); color: #5a78dc; }
 .tab.active { background: #5a78dc; color: #fff; }
+.tab-en { font-size: 13px; font-weight: 400; opacity: 0.7; margin-left: 4px; }
 
 /* 链接列表 */
 .links-section { }

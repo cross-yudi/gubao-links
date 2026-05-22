@@ -26,11 +26,15 @@ async function loadData() {
 // 渲染分类 Tab
 function renderTabs() {
   const tabsEl = document.getElementById('tabs');
-  tabsEl.innerHTML = categories.map(cat =>
-    `<button class="tab${cat.id === activeCategoryId ? ' active' : ''}" data-id="${cat.id}">
-      ${escapeHtml(cat.icon)} ${escapeHtml(cat.name)}
-    </button>`
-  ).join('');
+  tabsEl.innerHTML = categories.map(cat => {
+    const parts = cat.name.split(' / ');
+    const nameHtml = parts.length === 2
+      ? `${escapeHtml(parts[0])} <span class="tab-en">${escapeHtml(parts[1])}</span>`
+      : escapeHtml(cat.name);
+    return `<button class="tab${cat.id === activeCategoryId ? ' active' : ''}" data-id="${cat.id}">
+      ${escapeHtml(cat.icon)} ${nameHtml}
+    </button>`;
+  }).join('');
 
   tabsEl.querySelectorAll('.tab').forEach(btn => {
     btn.addEventListener('click', () => {

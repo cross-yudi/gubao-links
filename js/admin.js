@@ -234,10 +234,11 @@ function editLink(id) {
   openModal('编辑链接', [
     { key: 'name', label: '网站名称', value: link.name },
     { key: 'url', label: '网址', value: link.url, placeholder: 'https://...' },
+    { key: 'icon_url', label: '图标链接 (可选)', value: link.icon_url || '', placeholder: 'https://...favicon.png' },
     { key: 'description', label: '描述', value: link.description || '', type: 'textarea', placeholder: '简短描述' }
   ], async (values) => {
     const ok = await apiMutate('PATCH', `links?id=eq.${id}`, {
-      name: values.name, url: values.url, description: values.description
+      name: values.name, url: values.url, icon_url: values.icon_url, description: values.description
     });
     if (!ok) return false;
     showToast('链接已更新');
@@ -263,13 +264,14 @@ async function addLink() {
   openModal('添加链接', [
     { key: 'name', label: '网站名称', placeholder: '例如 低端影视' },
     { key: 'url', label: '网址', placeholder: 'https://...' },
+    { key: 'icon_url', label: '图标链接 (可选)', placeholder: '留空则自动获取网站图标' },
     { key: 'description', label: '描述', type: 'textarea', placeholder: '简短描述（可选）' }
   ], async (values) => {
     const catLinks = adminLinks.filter(l => l.category_id === selectedCategoryId);
     const maxSort = catLinks.reduce((max, l) => Math.max(max, l.sort_order), 0);
     const ok = await apiMutate('POST', 'links', {
       category_id: selectedCategoryId,
-      name: values.name, url: values.url, description: values.description || '',
+      name: values.name, url: values.url, icon_url: values.icon_url || '', description: values.description || '',
       sort_order: maxSort + 1
     });
     if (!ok) return false;

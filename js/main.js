@@ -83,13 +83,15 @@ function renderLinks(filterText = '') {
   }
 
   listEl.innerHTML = filteredLinks.map(link => {
-    const favicon = getFaviconUrl(link.url);
+    const customIcon = link.icon_url ? link.icon_url : '';
+    const favicon = customIcon ? '' : getFaviconUrl(link.url);
     const fallback = activeCat ? activeCat.icon : '🔗';
+    const imgUrl = customIcon || favicon;
     return `
     <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener" class="link-card">
       <div class="link-top">
         <span class="link-icon">
-          ${favicon ? `<img src="${favicon}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none">${fallback}</span>` : fallback}
+          ${imgUrl ? `<img src="${escapeHtml(imgUrl)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none">${fallback}</span>` : fallback}
         </span>
         <div class="link-name">${escapeHtml(link.name)}</div>
       </div>
